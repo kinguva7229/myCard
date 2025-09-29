@@ -14,12 +14,13 @@ export class MyCard extends LitElement {
 
   constructor() {
     super();
-    this.title = "My card";
     this.heading = "card-title";
-    this.image = "Poster Image";
-    this.alt = "Movie poster";
+    this.image = "";
+    this.alt = "";
     this.para = "information";
-    this.poster = "card-image ";
+    this.fancy = false;
+   
+    
   }
 
   static get styles() {
@@ -27,6 +28,13 @@ export class MyCard extends LitElement {
       :host {
         display: block; 
       }
+
+      :host([fancy]) .card {
+      background-color: pink;
+      border: 2px solid fuchsia;
+      box-shadow: 10px 5px 5px red;
+    }
+
       .wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -46,9 +54,7 @@ export class MyCard extends LitElement {
   margin: 16px 0;
 }
 
-.card.fancy {
-  background-color: DeepSkyBlue;
-}
+]
 @media (max-width: 500px) {
   .card {
     max-width: 90%;
@@ -68,22 +74,36 @@ export class MyCard extends LitElement {
   }
 
   render() {
-    return html`
-  <div class="card">
-    <h1 class="${this.heading}">${this.title}</h1>
-    <img class="${this.poster}" src="${this.image}" alt="${this.alt} poster">
-    <p>${this.para}</p>
-  </div>`;
+  return html`
+    <div class="card">
+      <h1 class="card-title">${this.heading}</h1>
+      <img src="${this.image}" alt="${this.alt}">
+      <details ?open="${this.fancy}" @toggle="${this.openChanged}">
+        <summary>Description</summary>
+        <div>
+          <slot>${this.description}</slot>
+        </div>
+      </details>
+    </div>
+  `;
+}
+openChanged(e) {
+    console.log(e.newState);
+    if (e.newState === "open") {
+      this.fancy = true;
+    }
+    else {
+      this.fancy = false;
+    }
   }
 
   static get properties() {
     return {
-      title: { type: String },
       heading: { type: String },
       image: { type: String },
       alt: { type: String },
-      para: { type: String },
-      poster: { type: String },
+      description: { type: String },
+      fancy: { type: Boolean, reflect: true }
     };
   }
 }
